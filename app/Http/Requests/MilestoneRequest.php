@@ -28,7 +28,7 @@ class MilestoneRequest extends FormRequest
     public function rules()
     {
         return [
-            'worksheet_id' => ['required', Rule::exists('worksheets')]
+            // 'worksheet_id' => ['required', Rule::exists('worksheets')]
         ];
     }
 
@@ -39,9 +39,21 @@ class MilestoneRequest extends FormRequest
             : new Milestone();
     }
 
-    function persist(?Worksheet $worksheet): Milestone
+    function persist(?Worksheet $worksheet = null): Milestone
     {
         $model = $this->getModel();
-        // TODO: Implement persist() method.
+        $model->name = $this->input('name', $model->name);
+
+        if (!$model->exists){
+            $model->authored_by = $this->user()->id;
+        }
+
+        if (!$model->exists && !is_null($worksheet)) {
+            $worksheet->milestones()->save($model);
+        } else {
+            $model->save();
+        }
+
+        return $model;
     }
 }

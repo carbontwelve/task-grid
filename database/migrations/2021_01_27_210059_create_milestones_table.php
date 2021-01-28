@@ -17,6 +17,7 @@ class CreateMilestonesTable extends Migration
             $table->id();
             $table->timestamps();
             $table->softDeletes();
+            $table->string('name');
             $table->unsignedBigInteger('authored_by');
             $table->unsignedBigInteger('worksheet_id');
 

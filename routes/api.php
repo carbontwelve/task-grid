@@ -33,11 +33,15 @@ Route::middleware('auth:api')->group(function() {
     Route::apiResource('worksheet', WorksheetController::class)->except(['index', 'store']);
     Route::patch('worksheet/{worksheet}/restore', 'App\Http\Controllers\WorksheetController@restore')
         ->name('worksheet.restore');
+    Route::post('worksheet/{worksheet}/milestones', 'App\Http\Controllers\MilestoneController@store')
+        ->name('milestone.store');
     Route::get('worksheet/{worksheet}/milestones', 'App\Http\Controllers\MilestoneController@index')
         ->name('worksheet.milestones');
     Route::get('worksheet/{worksheet}/tasks', 'App\Http\Controllers\TaskController@index')
         ->name('worksheet.tasks');
-    Route::apiResource('milestone', MilestoneController::class)->except(['index']);
+    Route::apiResource('milestone', MilestoneController::class)->except(['index', 'store']);
+    Route::patch('milestone/{milestone}/restore', 'App\Http\Controllers\MilestoneController@restore')
+        ->name('milestone.restore');
     Route::apiResource('task', TaskController::class)->except(['index']);
 
 });

@@ -17,9 +17,9 @@ class MilestoneController extends Controller
         return MilestoneResource::collection($worksheet->milestones()->get());
     }
 
-    public function store(MilestoneRequest $request): MilestoneResource
+    public function store(Worksheet $worksheet, MilestoneRequest $request): MilestoneResource
     {
-        return new MilestoneResource($request->persist());
+        return new MilestoneResource($request->persist($worksheet));
     }
 
     public function show(Milestone $milestone)
@@ -29,12 +29,18 @@ class MilestoneController extends Controller
 
     public function update(MilestoneRequest $request): MilestoneResource
     {
-        return $this->store($request);
+        return new MilestoneResource($request->persist());
     }
 
     public function destroy(Milestone $milestone): JsonResponse
     {
         $milestone->delete();
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function restore(int $id): JsonResponse
+    {
+        Milestone::withTrashed()->findOrFail($id)->restore();
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

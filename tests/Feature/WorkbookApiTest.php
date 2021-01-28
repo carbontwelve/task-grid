@@ -11,11 +11,6 @@ class WorkbookApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
     public function testWorkbookIndex()
     {
         $user = User::factory()->create();

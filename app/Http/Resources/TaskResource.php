@@ -31,7 +31,7 @@ class TaskResource extends JsonResource
                 'milestones' => MilestoneResource::collection($this->whenLoaded('milestones'))
             ],
             'links' => [
-                'self' => action('TaskController@show', ['task' => $this->id]),
+                'self' => action('\App\Http\Controllers\TaskController@show', ['task' => $this->id]),
             ],
         ];
     }
