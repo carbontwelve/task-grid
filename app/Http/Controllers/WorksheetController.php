@@ -38,7 +38,7 @@ class WorksheetController extends Controller
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function restore(int $id)
+    public function restore(int $id): JsonResponse
     {
         Worksheet::withTrashed()->findOrFail($id)->restore();
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
