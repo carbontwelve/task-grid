@@ -32,10 +32,3 @@ jobs:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
       run: vendor/bin/phpunit
-  phpstan:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: php-actions/composer@v5 # or alternative dependency management
-    - uses: php-actions/phpstan@v2
