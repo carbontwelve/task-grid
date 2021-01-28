@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Models\Worksheet;
+use App\Models\Workbook;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,54 +19,38 @@ class WorkbookApiTest extends TestCase
     public function testWorkbookIndex()
     {
         $user = User::factory()->create();
-
-        /** @var Worksheet $worksheet */
-        $worksheet = Worksheet::factory()
-            ->create(['authored_by' => $user->id]);
-
         $this->actingAs($user, 'api');
 
-        $response = $this->getJson(route('worksheet.worksheets', ['worksheet' => $worksheet]))
-            ->assertStatus(200);
-
-        $this->assertCount(0, $response->json('data'));
-
         for ($i = 0; $i < 10; $i++) {
-            $worksheet->worksheets()->save(Worksheet::factory()->make([
-                'authored_by' => $user->id
-            ]));
+            Workbook::factory()
+                ->create(['authored_by' => $user->id]);
         }
 
         $this->withoutExceptionHandling();
 
-        $response = $this->getJson(route('worksheet.worksheets', ['worksheet' => $worksheet]))
+        $response = $this->getJson(route('workbook.index'))
             ->assertStatus(200);
 
         $this->assertCount(10, $response->json('data'));
-
     }
 
     public function testWorkbookPersist()
     {
         $user = User::factory()->create();
 
-        /** @var Worksheet $worksheet */
-        $worksheet = Worksheet::factory()
-            ->create(['authored_by' => $user->id]);
-
-        $this->assertEquals(0, $worksheet->worksheets()->count());
-
         $this->actingAs($user, 'api');
 
+        $this->withoutExceptionHandling();
+
         // Store
-        $response = $this->postJson(route('worksheet.store', ['worksheet' => $worksheet]), [
+        $response = $this->postJson(route('workbook.store'), [
             'name' => 'Hello world',
         ])->assertStatus(201);
 
         $this->assertEquals('Hello world', $response->json('data.attributes.name'));
 
         // Update
-        $response = $this->putJson(route('worksheet.update', ['worksheet' => $response->json('data.id')]), [
+        $response = $this->putJson(route('workbook.update', ['workbook' => $response->json('data.id')]), [
             'name' => 'World Hello',
         ])->assertStatus(200);
 
@@ -77,32 +61,26 @@ class WorkbookApiTest extends TestCase
     {
         $user = User::factory()->create();
 
-        /** @var Worksheet $worksheet */
-        $worksheet = Worksheet::factory()
-            ->create(['authored_by' => $user->id]);
-
-        $this->assertEquals(0, $worksheet->worksheets()->count());
-
         for ($i = 0; $i<3; $i++) {
-            $worksheet->worksheets()->save(Worksheet::factory()->make([
-                'authored_by' => $user->id,
-            ]));
+            Workbook::factory()
+                ->create(['authored_by' => $user->id]);
         }
 
-        $this->assertEquals(3, $worksheet->worksheets()->count());
+        $this->assertEquals(3, (new Workbook)->newQuery()->count());
 
-        $found = $worksheet->worksheets()->first();
+        $found = (new Workbook)->newQuery()->first();
 
         $this->actingAs($user, 'api');
 
-        $this->deleteJson(route('worksheet.destroy', ['worksheet' => $found->id]))
+        $this->deleteJson(route('workbook.destroy', ['workbook' => $found->id]))
             ->assertStatus(204);
 
-        $this->assertEquals(2, $worksheet->worksheets()->count());
+        $this->assertEquals(2, (new Workbook)->newQuery()->count());
 
-        $this->patchJson(route('worksheet.restore', ['worksheet' => $found->id]))
+        $this->withoutExceptionHandling();
+        $this->patchJson(route('workbook.restore', ['workbook' => $found->id]))
             ->assertStatus(204);
 
-        $this->assertEquals(3, $worksheet->worksheets()->count());
+        $this->assertEquals(3, (new Workbook)->newQuery()->count());
     }
 }

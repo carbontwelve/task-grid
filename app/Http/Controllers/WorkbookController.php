@@ -40,4 +40,10 @@ class WorkbookController extends Controller
         $workbook->delete();
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
+
+    public function restore(int $id): JsonResponse
+    {
+        Workbook::withTrashed()->findOrFail($id)->restore();
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
 }

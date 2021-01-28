@@ -39,6 +39,11 @@ class WorkbookRequest extends FormRequest
     function persist(): Workbook
     {
         $model = $this->getModel();
-        // TODO: Implement persist() method.
+        $model->name = $this->input('name', $model->name);
+        if (!$model->exists){
+            $model->authored_by = $this->user()->id;
+        }
+        $model->save();
+        return $model;
     }
 }

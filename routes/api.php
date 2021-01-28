@@ -28,6 +28,8 @@ Route::middleware('auth:api')->group(function() {
         ->name('workbook.worksheets');
     Route::post('workbook/{workbook}/worksheets', 'App\Http\Controllers\WorksheetController@store')
         ->name('worksheet.store');
+    Route::patch('workbook/{workbook}/restore', 'App\Http\Controllers\WorkbookController@restore')
+        ->name('workbook.restore');
     Route::apiResource('worksheet', WorksheetController::class)->except(['index', 'store']);
     Route::patch('worksheet/{worksheet}/restore', 'App\Http\Controllers\WorksheetController@restore')
         ->name('worksheet.restore');

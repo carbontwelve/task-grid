@@ -30,7 +30,7 @@ class WorkbookResource extends JsonResource
                 'worksheets' => WorksheetResource::collection($this->whenLoaded('worksheets'))
             ],
             'links' => [
-                'self' => action('WorkbookController@show', ['workbook' => $this->id]),
+                'self' => action('\App\Http\Controllers\WorkbookController@show', ['workbook' => $this->id]),
             ],
         ];
     }
