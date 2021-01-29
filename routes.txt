@@ -1,47 +1,94 @@
-+--------+-----------+--------------------------------------+----------------------+--------------------------------------------------+------------+
-| Domain | Method    | URI                                  | Name                 | Action                                           | Middleware |
-+--------+-----------+--------------------------------------+----------------------+--------------------------------------------------+------------+
-|        | GET|HEAD  | /                                    |                      | Closure                                          | web        |
-|        | POST      | api/milestone                        | milestone.store      | App\Http\Controllers\MilestoneController@store   | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | DELETE    | api/milestone/{milestone}            | milestone.destroy    | App\Http\Controllers\MilestoneController@destroy | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | PUT|PATCH | api/milestone/{milestone}            | milestone.update     | App\Http\Controllers\MilestoneController@update  | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | GET|HEAD  | api/milestone/{milestone}            | milestone.show       | App\Http\Controllers\MilestoneController@show    | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | POST      | api/task                             | task.store           | App\Http\Controllers\TaskController@store        | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | DELETE    | api/task/{task}                      | task.destroy         | App\Http\Controllers\TaskController@destroy      | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | PUT|PATCH | api/task/{task}                      | task.update          | App\Http\Controllers\TaskController@update       | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | GET|HEAD  | api/task/{task}                      | task.show            | App\Http\Controllers\TaskController@show         | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | GET|HEAD  | api/user                             |                      | Closure                                          | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | POST      | api/workbook                         | workbook.store       | App\Http\Controllers\WorkbookController@store    | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | GET|HEAD  | api/workbook                         | workbook.index       | App\Http\Controllers\WorkbookController@index    | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | DELETE    | api/workbook/{workbook}              | workbook.destroy     | App\Http\Controllers\WorkbookController@destroy  | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | PUT|PATCH | api/workbook/{workbook}              | workbook.update      | App\Http\Controllers\WorkbookController@update   | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | GET|HEAD  | api/workbook/{workbook}              | workbook.show        | App\Http\Controllers\WorkbookController@show     | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | GET|HEAD  | api/workbook/{workbook}/worksheets   | workbook.worksheets  | App\Http\Controllers\WorksheetController@index   | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | DELETE    | api/worksheet/{worksheet}            | worksheet.destroy    | App\Http\Controllers\WorksheetController@destroy | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | PUT|PATCH | api/worksheet/{worksheet}            | worksheet.update     | App\Http\Controllers\WorksheetController@update  | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | GET|HEAD  | api/worksheet/{worksheet}            | worksheet.show       | App\Http\Controllers\WorksheetController@show    | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | GET|HEAD  | api/worksheet/{worksheet}/milestones | worksheet.milestones | App\Http\Controllers\MilestoneController@index   | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | POST      | api/worksheet/{worksheet}/milestones | milestone.store      | App\Http\Controllers\MilestoneController@store   | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-|        | GET|HEAD  | api/worksheet/{worksheet}/tasks      | worksheet.tasks      | App\Http\Controllers\TaskController@index        | api        |
-|        |           |                                      |                      |                                                  | auth:api   |
-+--------+-----------+--------------------------------------+----------------------+--------------------------------------------------+------------+
++--------+-----------+---------------------------------------+----------------------+------------------------------------------------------------+---------------------------------------------------------+
+| Domain | Method    | URI                                   | Name                 | Action                                                     | Middleware                                              |
++--------+-----------+---------------------------------------+----------------------+------------------------------------------------------------+---------------------------------------------------------+
+|        | GET|HEAD  | /                                     |                      | Closure                                                    | App\Http\Middleware\EncryptCookies                      |
+|        |           |                                       |                      |                                                            | Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse |
+|        |           |                                       |                      |                                                            | Illuminate\Session\Middleware\StartSession              |
+|        |           |                                       |                      |                                                            | Illuminate\View\Middleware\ShareErrorsFromSession       |
+|        |           |                                       |                      |                                                            | App\Http\Middleware\VerifyCsrfToken                     |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | GET|HEAD  | api/milestone/{milestone}             | milestone.show       | App\Http\Controllers\MilestoneController@show              | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | DELETE    | api/milestone/{milestone}             | milestone.destroy    | App\Http\Controllers\MilestoneController@destroy           | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | PUT|PATCH | api/milestone/{milestone}             | milestone.update     | App\Http\Controllers\MilestoneController@update            | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | PATCH     | api/milestone/{milestone}/restore     | milestone.restore    | App\Http\Controllers\MilestoneController@restore           | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | GET|HEAD  | api/task/{task}                       | task.show            | App\Http\Controllers\TaskController@show                   | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | PUT|PATCH | api/task/{task}                       | task.update          | App\Http\Controllers\TaskController@update                 | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | DELETE    | api/task/{task}                       | task.destroy         | App\Http\Controllers\TaskController@destroy                | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | PUT       | api/task/{task}/milestone/{milestone} | task.milestone       | App\Http\Controllers\TaskController@milestone              | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | PATCH     | api/task/{task}/restore               | task.restore         | App\Http\Controllers\TaskController@restore                | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | GET|HEAD  | api/user                              |                      | Closure                                                    | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | GET|HEAD  | api/workbook                          | workbook.index       | App\Http\Controllers\WorkbookController@index              | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | POST      | api/workbook                          | workbook.store       | App\Http\Controllers\WorkbookController@store              | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | GET|HEAD  | api/workbook/{workbook}               | workbook.show        | App\Http\Controllers\WorkbookController@show               | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | PUT|PATCH | api/workbook/{workbook}               | workbook.update      | App\Http\Controllers\WorkbookController@update             | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | DELETE    | api/workbook/{workbook}               | workbook.destroy     | App\Http\Controllers\WorkbookController@destroy            | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | PATCH     | api/workbook/{workbook}/restore       | workbook.restore     | App\Http\Controllers\WorkbookController@restore            | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | POST      | api/workbook/{workbook}/worksheets    | worksheet.store      | App\Http\Controllers\WorksheetController@store             | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | GET|HEAD  | api/workbook/{workbook}/worksheets    | workbook.worksheets  | App\Http\Controllers\WorksheetController@index             | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | DELETE    | api/worksheet/{worksheet}             | worksheet.destroy    | App\Http\Controllers\WorksheetController@destroy           | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | GET|HEAD  | api/worksheet/{worksheet}             | worksheet.show       | App\Http\Controllers\WorksheetController@show              | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | PUT|PATCH | api/worksheet/{worksheet}             | worksheet.update     | App\Http\Controllers\WorksheetController@update            | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | POST      | api/worksheet/{worksheet}/milestones  | milestone.store      | App\Http\Controllers\MilestoneController@store             | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | GET|HEAD  | api/worksheet/{worksheet}/milestones  | worksheet.milestones | App\Http\Controllers\MilestoneController@index             | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | PATCH     | api/worksheet/{worksheet}/restore     | worksheet.restore    | App\Http\Controllers\WorksheetController@restore           | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | GET|HEAD  | api/worksheet/{worksheet}/tasks       | worksheet.tasks      | App\Http\Controllers\TaskController@index                  | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | POST      | api/worksheet/{worksheet}/tasks       | task.store           | App\Http\Controllers\TaskController@store                  | App\Http\Middleware\Authenticate:api                    |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\ThrottleRequests:api      |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
+|        | GET|HEAD  | sanctum/csrf-cookie                   |                      | Laravel\Sanctum\Http\Controllers\CsrfCookieController@show | App\Http\Middleware\EncryptCookies                      |
+|        |           |                                       |                      |                                                            | Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse |
+|        |           |                                       |                      |                                                            | Illuminate\Session\Middleware\StartSession              |
+|        |           |                                       |                      |                                                            | Illuminate\View\Middleware\ShareErrorsFromSession       |
+|        |           |                                       |                      |                                                            | App\Http\Middleware\VerifyCsrfToken                     |
+|        |           |                                       |                      |                                                            | Illuminate\Routing\Middleware\SubstituteBindings        |
++--------+-----------+---------------------------------------+----------------------+------------------------------------------------------------+---------------------------------------------------------+
