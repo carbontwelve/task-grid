@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Milestone;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Workbook;
@@ -133,5 +134,88 @@ class TaskApiTest extends TestCase
             ->assertStatus(204);
 
         $this->assertEquals(3, (new Task)->newQuery()->count());
+    }
+
+    public function testTaskMilestonePivot404()
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'api');
+
+        $this->putJson(route('task.milestone', ['task' => 123, 'milestone' => 123]))
+            ->assertStatus(404);
+    }
+
+    public function testTaskMilestonePivot()
+    {
+        $user = User::factory()->create();
+
+        /** @var Workbook $workbook */
+        $workbook = Workbook::factory()
+            ->create(['authored_by' => $user->id]);
+        /** @var Worksheet $worksheet */
+        $worksheet = $workbook->worksheets()
+            ->save(Worksheet::factory()->make(['authored_by' => $user->id]));
+        /** @var Task $task */
+        $task = $worksheet->tasks()->save(Task::factory()->make([
+            'authored_by' => $user->id,
+            'name' => 'Task'
+        ]));
+        /** @var Milestone $milestone */
+        $milestone = $worksheet->milestones()->save(Milestone::factory()->make([
+            'authored_by' => $user->id,
+            'name' => 'Milestone'
+        ]));
+
+        $this->actingAs($user, 'api');
+
+        $response = $this->getJson(route('task.show', ['task' => $task->id]))
+            ->assertStatus(200)
+            ->assertJsonStructure(['data' => ['relationships' => ['milestones' => []]]]);
+
+        $this->assertCount(0, $response->json('data.relationships.milestones'));
+        $this->assertDatabaseCount('milestone_task', 0);
+
+        $this->putJson(route('task.milestone', ['task' => $task, 'milestone' => $milestone]))
+            ->assertStatus(422);
+
+        //
+        // Create Pivot
+        //
+
+        $this->withoutExceptionHandling();
+
+        $this->putJson(route('task.milestone', ['task' => $task, 'milestone' => $milestone]), [
+            'urgency' => Task::UrgencyNiceToHave
+        ])->assertStatus(204);
+
+        $this->assertDatabaseCount('milestone_task', 1);
+
+        $response = $this->getJson(route('task.show', ['task' => $task->id]))
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'urgency' => Task::UrgencyNiceToHave
+            ]);
+
+        $this->assertCount(1, $response->json('data.relationships.milestones'));
+
+        //
+        // Update Pivot
+        //
+
+        $this->putJson(route('task.milestone', ['task' => $task, 'milestone' => $milestone]), [
+            'urgency' => Task::UrgencyNotRequired
+        ])->assertStatus(204);
+
+        $this->assertDatabaseCount('milestone_task', 1);
+
+        $response = $this->getJson(route('task.show', ['task' => $task->id]))
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                'urgency' => Task::UrgencyNotRequired
+            ]);
+
+        $this->assertCount(1, $response->json('data.relationships.milestones'));
+
     }
 }

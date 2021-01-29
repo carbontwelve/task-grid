@@ -23,10 +23,11 @@ class Milestone extends Model
         return $this->belongsTo(Worksheet::class);
     }
 
-    public function tasks():BelongsToMany
+    public function tasks(): BelongsToMany
     {
         return $this->belongsToMany(Task::class)
-            ->withPivot(['urgency']);
+            ->withPivot(['urgency'])
+            ->using(MilestoneTask::class);
     }
 
 }

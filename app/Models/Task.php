@@ -35,6 +35,7 @@ class Task extends Model
     public function milestones(): BelongsToMany
     {
         return $this->belongsToMany(Milestone::class)
-            ->withPivot(['urgency']);
+            ->withPivot(['urgency'])
+            ->using(MilestoneTask::class);
     }
 }

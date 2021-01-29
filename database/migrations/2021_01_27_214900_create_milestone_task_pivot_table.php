@@ -14,6 +14,7 @@ class CreateMilestoneTaskPivotTable extends Migration
     public function up()
     {
         Schema::create('milestone_task', function (Blueprint $table) {
+            $table->timestamps();
             $table->unsignedBigInteger('milestone_id');
             $table->unsignedBigInteger('task_id');
             $table->string('urgency');

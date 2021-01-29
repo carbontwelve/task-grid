@@ -8,8 +8,10 @@ use App\Models\Milestone;
 use App\Models\Task;
 use App\Models\Worksheet;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class TaskController extends Controller
 {
@@ -45,8 +47,23 @@ class TaskController extends Controller
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function milestone(Task $task, Milestone $milestone)
+    public function milestone(Task $task, Milestone $milestone, Request $request)
     {
-        $n = 1;
+        $this->validate($request, [
+            'urgency' => ['required', Rule::in([
+                Task::UrgencyShowStopper,
+                Task::UrgencyRequired,
+                Task::UrgencyNiceToHave,
+                Task::UrgencyNotRequired
+            ])]
+        ]);
+
+        if ($milestone->tasks()->where('task_id', $task->id)->exists()) {
+            $milestone->tasks()->updateExistingPivot($task->id,  ['urgency' => $request->input('urgency')]);
+        } else {
+            $milestone->tasks()->attach($task->id, ['urgency' => $request->input('urgency')]);
+        }
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

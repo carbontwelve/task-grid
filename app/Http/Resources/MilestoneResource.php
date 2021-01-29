@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Milestone;
-use App\Models\Worksheet;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -17,14 +16,14 @@ class MilestoneResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
-        return [
+        $arr = [
             'type' => 'milestone',
             'id' => $this->id,
             'attributes' => [
                 'name' => $this->name,
-                'authored_by' => $this->authored_by
+                'authored_by' => $this->authored_by,
             ],
             'relationships' => [
                 'author' => $this->whenLoaded('author'),
@@ -35,5 +34,11 @@ class MilestoneResource extends JsonResource
                 'self' => action('\App\Http\Controllers\MilestoneController@show', ['milestone' => $this->id]),
             ],
         ];
+
+        if ($this->pivot) {
+            $arr['attributes']['urgency'] = $this->pivot->urgency;
+        }
+
+        return $arr;
     }
 }
