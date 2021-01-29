@@ -1,9 +1,5 @@
 <?php
 
-use App\Http\Controllers\MilestoneController;
-use App\Http\Controllers\TaskController;
-use App\Http\Controllers\WorkbookController;
-use App\Http\Controllers\WorksheetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,29 +18,53 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:api')->group(function () {
-    Route::apiResource('workbook', WorkbookController::class);
-    Route::get('workbook/{workbook}/worksheets', 'App\Http\Controllers\WorksheetController@index')
-        ->name('workbook.worksheets');
-    Route::post('workbook/{workbook}/worksheets', 'App\Http\Controllers\WorksheetController@store')
-        ->name('worksheet.store');
-    Route::patch('workbook/{workbook}/restore', 'App\Http\Controllers\WorkbookController@restore')
-        ->name('workbook.restore');
-    Route::apiResource('worksheet', WorksheetController::class)->except(['index', 'store']);
-    Route::patch('worksheet/{worksheet}/restore', 'App\Http\Controllers\WorksheetController@restore')
-        ->name('worksheet.restore');
-    Route::post('worksheet/{worksheet}/milestones', 'App\Http\Controllers\MilestoneController@store')
-        ->name('milestone.store');
-    Route::get('worksheet/{worksheet}/milestones', 'App\Http\Controllers\MilestoneController@index')
-        ->name('worksheet.milestones');
-    Route::post('worksheet/{worksheet}/tasks', 'App\Http\Controllers\TaskController@store')
-        ->name('task.store');
-    Route::get('worksheet/{worksheet}/tasks', 'App\Http\Controllers\TaskController@index')
-        ->name('worksheet.tasks');
-    Route::apiResource('milestone', MilestoneController::class)->except(['index', 'store']);
-    Route::patch('milestone/{milestone}/restore', 'App\Http\Controllers\MilestoneController@restore')
-        ->name('milestone.restore');
-    Route::apiResource('task', TaskController::class)->except(['index', 'store']);
-    Route::patch('task/{task}/restore', 'App\Http\Controllers\TaskController@restore')
-        ->name('task.restore');
-});
+Route::middleware('auth:api')
+    ->namespace('\\App\\Http\\Controllers')
+    ->group(function () {
+
+        //
+        // Workbook endpoints
+        //
+
+        Route::apiResource('workbook', 'WorkbookController');
+        Route::get('workbook/{workbook}/worksheets', 'WorksheetController@index')
+            ->name('workbook.worksheets');
+        Route::post('workbook/{workbook}/worksheets', 'WorksheetController@store')
+            ->name('worksheet.store');
+        Route::patch('workbook/{workbook}/restore', 'WorkbookController@restore')
+            ->name('workbook.restore');
+
+        //
+        // Worksheet endpoints
+        //
+
+        Route::apiResource('worksheet', 'WorksheetController')->except(['index', 'store']);
+        Route::patch('worksheet/{worksheet}/restore', 'WorksheetController@restore')
+            ->name('worksheet.restore');
+        Route::post('worksheet/{worksheet}/milestones', 'MilestoneController@store')
+            ->name('milestone.store');
+        Route::get('worksheet/{worksheet}/milestones', 'MilestoneController@index')
+            ->name('worksheet.milestones');
+        Route::post('worksheet/{worksheet}/tasks', 'TaskController@store')
+            ->name('task.store');
+        Route::get('worksheet/{worksheet}/tasks', 'TaskController@index')
+            ->name('worksheet.tasks');
+
+        //
+        // Milestone endpoints
+        //
+
+        Route::apiResource('milestone', 'MilestoneController')->except(['index', 'store']);
+        Route::patch('milestone/{milestone}/restore', 'MilestoneController@restore')
+            ->name('milestone.restore');
+
+        //
+        // Task endpoints
+        //
+
+        Route::apiResource('task', 'TaskController')->except(['index', 'store']);
+        Route::patch('task/{task}/restore', 'TaskController@restore')
+            ->name('task.restore');
+        Route::put('task/{task}/milestone/{milestone}', 'TaskController@milestone')
+            ->name('task.milestone');
+    });
