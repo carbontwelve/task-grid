@@ -65,4 +65,9 @@ class TaskModelTest extends TestCase
         $this->assertEquals(Task::UrgencyShowStopper, $found->pivot->urgency);
     }
 
+    public function testItHasAuthorRelationship()
+    {
+        $this->doSeeding();
+        $this->assertEquals(1, $this->model->author()->count());
+    }
 }
