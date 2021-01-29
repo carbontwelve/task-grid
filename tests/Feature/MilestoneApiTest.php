@@ -75,7 +75,30 @@ class MilestoneApiTest extends TestCase
 
     public function testMilestoneShow()
     {
-        $this->markTestIncomplete();
+        $user = User::factory()->create();
+
+        /** @var Workbook $workbook */
+        $workbook = Workbook::factory()
+            ->create(['authored_by' => $user->id]);
+        /** @var Worksheet $worksheet */
+        $worksheet = $workbook->worksheets()
+            ->save(Worksheet::factory()->make([
+                'authored_by' => $user->id,
+            ]));
+
+        $milestone = $worksheet->milestones()
+            ->save(Milestone::factory()->make([
+                'authored_by' => $user->id,
+                'name' => 'Test Milestone Show'
+            ]));
+
+        $this->actingAs($user, 'api');
+
+        $this->getJson(route('milestone.show', $workbook))
+            ->assertOk()
+            ->assertJsonFragment([
+                'name' => 'Test Milestone Show'
+            ]);
     }
 
     public function testMilestoneDestroyRestore()

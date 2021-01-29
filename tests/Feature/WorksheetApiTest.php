@@ -71,7 +71,25 @@ class WorksheetApiTest extends TestCase
 
     public function testWorksheetShow()
     {
-        $this->markTestIncomplete();
+        $user = User::factory()->create();
+
+        /** @var Workbook $workbook */
+        $workbook = Workbook::factory()
+            ->create(['authored_by' => $user->id]);
+        /** @var Worksheet $worksheet */
+        $worksheet = $workbook->worksheets()
+            ->save(Worksheet::factory()->make([
+                'authored_by' => $user->id,
+                'name' => 'Test Worksheet Show'
+            ]));
+
+        $this->actingAs($user, 'api');
+
+        $this->getJson(route('worksheet.show', $worksheet))
+            ->assertOk()
+            ->assertJsonFragment([
+                'name' => 'Test Worksheet Show'
+            ]);
     }
 
     public function testWorksheetDestroyRestore()
