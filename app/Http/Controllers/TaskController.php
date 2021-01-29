@@ -17,24 +17,30 @@ class TaskController extends Controller
         return TaskResource::collection($worksheet->tasks()->get());
     }
 
-    public function store(TaskRequest $request)
+    public function store(Worksheet $worksheet, TaskRequest $request): TaskResource
     {
-        return new TaskResource($request->persist());
+        return new TaskResource($request->persist($worksheet));
     }
 
-    public function show(Task $task)
+    public function show(Task $task): TaskResource
     {
         return new TaskResource($task);
     }
 
-    public function update(TaskRequest $request)
+    public function update(TaskRequest $request): TaskResource
     {
-        return $this->store($request);
+        return new TaskResource($request->persist());
     }
 
     public function destroy(Task $task): JsonResponse
     {
         $task->delete();
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function restore(int $id): JsonResponse
+    {
+        Task::withTrashed()->findOrFail($id)->restore();
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

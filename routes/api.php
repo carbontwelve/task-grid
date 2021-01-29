@@ -22,7 +22,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:api')->group(function() {
+Route::middleware('auth:api')->group(function () {
     Route::apiResource('workbook', WorkbookController::class);
     Route::get('workbook/{workbook}/worksheets', 'App\Http\Controllers\WorksheetController@index')
         ->name('workbook.worksheets');
@@ -37,11 +37,14 @@ Route::middleware('auth:api')->group(function() {
         ->name('milestone.store');
     Route::get('worksheet/{worksheet}/milestones', 'App\Http\Controllers\MilestoneController@index')
         ->name('worksheet.milestones');
+    Route::post('worksheet/{worksheet}/tasks', 'App\Http\Controllers\TaskController@store')
+        ->name('task.store');
     Route::get('worksheet/{worksheet}/tasks', 'App\Http\Controllers\TaskController@index')
         ->name('worksheet.tasks');
     Route::apiResource('milestone', MilestoneController::class)->except(['index', 'store']);
     Route::patch('milestone/{milestone}/restore', 'App\Http\Controllers\MilestoneController@restore')
         ->name('milestone.restore');
-    Route::apiResource('task', TaskController::class)->except(['index']);
-
+    Route::apiResource('task', TaskController::class)->except(['index', 'store']);
+    Route::patch('task/{task}/restore', 'App\Http\Controllers\TaskController@restore')
+        ->name('task.restore');
 });

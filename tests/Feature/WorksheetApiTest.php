@@ -69,6 +69,11 @@ class WorksheetApiTest extends TestCase
         $this->assertEquals('World Hello', $response->json('data.attributes.name'));
     }
 
+    public function testWorksheetShow()
+    {
+        $this->markTestIncomplete();
+    }
+
     public function testWorksheetDestroyRestore()
     {
         $user = User::factory()->create();

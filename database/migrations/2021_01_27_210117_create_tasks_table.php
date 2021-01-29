@@ -20,7 +20,7 @@ class CreateTasksTable extends Migration
             $table->unsignedBigInteger('authored_by');
             $table->unsignedBigInteger('worksheet_id');
 
-
+            $table->string('name');
 
             $table->foreign('worksheet_id')
                 ->references('id')
