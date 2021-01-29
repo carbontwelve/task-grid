@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Models\Milestone;
 use App\Models\Task;
 use App\Models\Worksheet;
 use Illuminate\Http\JsonResponse;
@@ -42,5 +43,10 @@ class TaskController extends Controller
     {
         Task::withTrashed()->findOrFail($id)->restore();
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function milestone(Task $task, Milestone $milestone)
+    {
+        $n = 1;
     }
 }
