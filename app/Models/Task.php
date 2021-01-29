@@ -14,16 +14,25 @@ class Task extends Model
     use HasFactory;
 
     const UrgencyNotRequired = 'not-required';
-    const UrgencyNiceToHave  = 'nice-to-have';
-    const UrgencyRequired    = 'required';
+    const UrgencyNiceToHave = 'nice-to-have';
+    const UrgencyRequired = 'required';
     const UrgencyShowStopper = 'show-stopper';
+
+    protected $with = [
+        'milestones'
+    ];
 
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'authored_by');
     }
 
-    public function milestones():BelongsToMany
+    public function worksheet(): BelongsTo
+    {
+        return $this->belongsTo(Worksheet::class);
+    }
+
+    public function milestones(): BelongsToMany
     {
         return $this->belongsToMany(Milestone::class)
             ->withPivot(['urgency']);
