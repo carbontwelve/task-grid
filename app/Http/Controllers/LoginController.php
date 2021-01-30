@@ -29,6 +29,7 @@ class LoginController extends Controller
             return response()->json(['error' => 'Invalid credentials provided.'], 422);
         }
 
+        /** @var User $userCreated */
         $userCreated = User::firstOrCreate(
             [
                 'email' => $user->getEmail()
@@ -50,7 +51,7 @@ class LoginController extends Controller
         );
         $token = $userCreated->createToken('spa-token')->plainTextToken;
 
-        return new JsonResponse($userCreated, 200, ['Access-Token' => $token]);
+        return new JsonResponse($userCreated, $userCreated->wasRecentlyCreated ? 201 : 200, ['Access-Token' => $token]);
     }
 
     protected function validateProvider(string $provider)
