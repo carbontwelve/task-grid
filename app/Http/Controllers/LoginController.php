@@ -15,7 +15,9 @@ class LoginController extends Controller
             return $invalid;
         }
 
-        return Socialite::driver($provider)->stateless()->redirect();
+        return Socialite::driver($provider)
+            ->stateless()
+            ->redirect();
     }
 
     public function handleProviderCallback(string $provider) {
@@ -29,6 +31,7 @@ class LoginController extends Controller
             return response()->json(['error' => 'Invalid credentials provided.'], 422);
         }
 
+        /** @var User $userCreated */
         $userCreated = User::firstOrCreate(
             [
                 'email' => $user->getEmail()
@@ -50,13 +53,13 @@ class LoginController extends Controller
         );
         $token = $userCreated->createToken('spa-token')->plainTextToken;
 
-        return new JsonResponse($userCreated, 200, ['Access-Token' => $token]);
+        return new JsonResponse($userCreated, $userCreated->wasRecentlyCreated ? 201 : 200, ['Access-Token' => $token]);
     }
 
     protected function validateProvider(string $provider)
     {
         if (!in_array($provider, ['github'])) {
-            return new JsonResponse(['error' => 'Please login using github'], 422);
+            return new JsonResponse(['error' => 'Please login using github.'], 422);
         }
         return null;
     }
