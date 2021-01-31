@@ -9,22 +9,20 @@ use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('social');
+    }
+
     public function redirectToProvider(string $provider)
     {
-        if ($invalid = $this->validateProvider($provider)) {
-            return $invalid;
-        }
-
         return Socialite::driver($provider)
             ->stateless()
             ->redirect();
     }
 
     public function handleProviderCallback(string $provider) {
-        if ($invalid = $this->validateProvider($provider)) {
-            return $invalid;
-        }
-
         try {
             $user = Socialite::driver($provider)->stateless()->user();
         } catch (ClientException $exception) {
@@ -54,13 +52,5 @@ class LoginController extends Controller
         $token = $userCreated->createToken('spa-token')->plainTextToken;
 
         return new JsonResponse($userCreated, $userCreated->wasRecentlyCreated ? 201 : 200, ['Access-Token' => $token]);
-    }
-
-    protected function validateProvider(string $provider)
-    {
-        if (!in_array($provider, ['github'])) {
-            return new JsonResponse(['error' => 'Please login using github.'], 422);
-        }
-        return null;
     }
 }

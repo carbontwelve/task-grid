@@ -55,11 +55,11 @@ class AuthenticationTest extends TestCase
     {
         $this->get(route('login', ['provider' => 'invalid']))
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJson(['error' => 'Please login using github.']);
+            ->assertJson(['error' => 'Invalid social service.']);
 
         $this->get(route('login.callback', ['provider' => 'invalid']))
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJson(['error' => 'Please login using github.']);
+            ->assertJson(['error' => 'Invalid social service.']);
     }
 
     public function testAuthenticationRedirect()
