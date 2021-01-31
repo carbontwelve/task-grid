@@ -13,26 +13,26 @@ use Illuminate\Http\Response;
 
 class WorkbookController extends Controller
 {
-    public function index(Request $request):AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
         /** @var User $user */
         $user = $request->user();
         return WorkbookResource::collection($user->workbooks()->get());
     }
 
-    public function store(WorkbookRequest $request)
-    {
-        return new WorkbookResource($request->persist());
-    }
-
-    public function show(Workbook $workbook)
+    public function show(Workbook $workbook): WorkbookResource
     {
         return new WorkbookResource($workbook);
     }
 
-    public function update(WorkbookRequest $request)
+    public function update(WorkbookRequest $request): WorkbookResource
     {
         return $this->store($request);
+    }
+
+    public function store(WorkbookRequest $request): WorkbookResource
+    {
+        return new WorkbookResource($request->persist());
     }
 
     public function destroy(Workbook $workbook): JsonResponse

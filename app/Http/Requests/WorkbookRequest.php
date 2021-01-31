@@ -12,7 +12,7 @@ class WorkbookRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -22,11 +22,22 @@ class WorkbookRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => ['required', 'max:255']
         ];
+    }
+
+    function persist(): Workbook
+    {
+        $model = $this->getModel();
+        $model->name = $this->input('name', $model->name);
+        if (!$model->exists) {
+            $model->authored_by = $this->user()->id;
+        }
+        $model->save();
+        return $model;
     }
 
     public function getModel(): Workbook
@@ -34,16 +45,5 @@ class WorkbookRequest extends FormRequest
         return $this->route()->hasParameter('workbook')
             ? (new Workbook())->newQuery()->findOrFail($this->route()->parameter('workbook'))
             : new Workbook();
-    }
-
-    function persist(): Workbook
-    {
-        $model = $this->getModel();
-        $model->name = $this->input('name', $model->name);
-        if (!$model->exists){
-            $model->authored_by = $this->user()->id;
-        }
-        $model->save();
-        return $model;
     }
 }

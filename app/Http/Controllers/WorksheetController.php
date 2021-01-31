@@ -17,11 +17,6 @@ class WorksheetController extends Controller
         return WorksheetResource::collection($workbook->worksheets()->get());
     }
 
-    public function store(WorksheetRequest $request, ?Workbook $workbook = null): WorksheetResource
-    {
-        return new WorksheetResource($request->persist($workbook));
-    }
-
     public function show(Worksheet $worksheet): WorksheetResource
     {
         return new WorksheetResource($worksheet);
@@ -30,6 +25,11 @@ class WorksheetController extends Controller
     public function update(WorksheetRequest $request): WorksheetResource
     {
         return $this->store($request);
+    }
+
+    public function store(WorksheetRequest $request, ?Workbook $workbook = null): WorksheetResource
+    {
+        return new WorksheetResource($request->persist($workbook));
     }
 
     public function destroy(Worksheet $worksheet): JsonResponse

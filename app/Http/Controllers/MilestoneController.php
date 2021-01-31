@@ -22,7 +22,7 @@ class MilestoneController extends Controller
         return new MilestoneResource($request->persist($worksheet));
     }
 
-    public function show(Milestone $milestone)
+    public function show(Milestone $milestone): MilestoneResource
     {
         return new MilestoneResource($milestone);
     }

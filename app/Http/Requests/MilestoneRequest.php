@@ -3,10 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Models\Milestone;
-use App\Models\Workbook;
 use App\Models\Worksheet;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class MilestoneRequest extends FormRequest
 {
@@ -15,7 +13,7 @@ class MilestoneRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -25,18 +23,11 @@ class MilestoneRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             // 'worksheet_id' => ['required', Rule::exists('worksheets')]
         ];
-    }
-
-    public function getModel(): Milestone
-    {
-        return $this->route()->hasParameter('milestone')
-            ? (new Milestone())->newQuery()->findOrFail($this->route()->parameter('milestone'))
-            : new Milestone();
     }
 
     function persist(?Worksheet $worksheet = null): Milestone
@@ -44,7 +35,7 @@ class MilestoneRequest extends FormRequest
         $model = $this->getModel();
         $model->name = $this->input('name', $model->name);
 
-        if (!$model->exists){
+        if (!$model->exists) {
             $model->authored_by = $this->user()->id;
         }
 
@@ -55,5 +46,12 @@ class MilestoneRequest extends FormRequest
         }
 
         return $model;
+    }
+
+    public function getModel(): Milestone
+    {
+        return $this->route()->hasParameter('milestone')
+            ? (new Milestone())->newQuery()->findOrFail($this->route()->parameter('milestone'))
+            : new Milestone();
     }
 }

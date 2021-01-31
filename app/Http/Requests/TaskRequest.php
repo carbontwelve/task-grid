@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use App\Models\Task;
 use App\Models\Worksheet;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class TaskRequest extends FormRequest
 {
@@ -14,7 +13,7 @@ class TaskRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -24,18 +23,11 @@ class TaskRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             // 'worksheet_id' => ['required', Rule::exists('worksheets')]
         ];
-    }
-
-    public function getModel(): Task
-    {
-        return $this->route()->hasParameter('task')
-            ? (new Task())->newQuery()->findOrFail($this->route()->parameter('task'))
-            : new Task();
     }
 
     function persist(?Worksheet $worksheet = null): Task
@@ -43,7 +35,7 @@ class TaskRequest extends FormRequest
         $model = $this->getModel();
         $model->name = $this->input('name', $model->name);
 
-        if (!$model->exists){
+        if (!$model->exists) {
             $model->authored_by = $this->user()->id;
         }
 
@@ -54,5 +46,12 @@ class TaskRequest extends FormRequest
         }
 
         return $model;
+    }
+
+    public function getModel(): Task
+    {
+        return $this->route()->hasParameter('task')
+            ? (new Task())->newQuery()->findOrFail($this->route()->parameter('task'))
+            : new Task();
     }
 }

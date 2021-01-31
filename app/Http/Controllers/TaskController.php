@@ -47,7 +47,7 @@ class TaskController extends Controller
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function milestone(Task $task, Milestone $milestone, Request $request)
+    public function milestone(Task $task, Milestone $milestone, Request $request): JsonResponse
     {
         $this->validate($request, [
             'urgency' => ['required', Rule::in([
@@ -59,7 +59,7 @@ class TaskController extends Controller
         ]);
 
         if ($milestone->tasks()->where('task_id', $task->id)->exists()) {
-            $milestone->tasks()->updateExistingPivot($task->id,  ['urgency' => $request->input('urgency')]);
+            $milestone->tasks()->updateExistingPivot($task->id, ['urgency' => $request->input('urgency')]);
         } else {
             $milestone->tasks()->attach($task->id, ['urgency' => $request->input('urgency')]);
         }

@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use App\Models\Workbook;
 use App\Models\Worksheet;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class WorksheetRequest extends FormRequest
 {
@@ -14,7 +13,7 @@ class WorksheetRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -24,26 +23,19 @@ class WorksheetRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => ['required', 'max:255'],
         ];
     }
 
-    public function getModel(): Worksheet
-    {
-        return $this->route()->hasParameter('worksheet')
-            ? (new Worksheet())->newQuery()->findOrFail($this->route()->parameter('worksheet'))
-            : new Worksheet();
-    }
-
-    function persist(?Workbook $workbook = null):Worksheet
+    function persist(?Workbook $workbook = null): Worksheet
     {
         $model = $this->getModel();
         $model->name = $this->input('name', $model->name);
 
-        if (!$model->exists){
+        if (!$model->exists) {
             $model->authored_by = $this->user()->id;
         }
 
@@ -54,5 +46,12 @@ class WorksheetRequest extends FormRequest
         }
 
         return $model;
+    }
+
+    public function getModel(): Worksheet
+    {
+        return $this->route()->hasParameter('worksheet')
+            ? (new Worksheet())->newQuery()->findOrFail($this->route()->parameter('worksheet'))
+            : new Worksheet();
     }
 }
