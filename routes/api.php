@@ -23,8 +23,8 @@ use Illuminate\Support\Facades\Route;
 // Authentication endpoints
 //
 
-Route::get('login/{provider}', [LoginController::class, 'redirectToProvider']);
-Route::get('login/{provider}/callback', [LoginController::class, 'handleProviderCallback']);
+Route::get('login/{provider}', [LoginController::class, 'redirectToProvider'])->name('login');
+Route::get('login/{provider}/callback', [LoginController::class, 'handleProviderCallback'])->name('login.callback');
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

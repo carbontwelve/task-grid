@@ -15,7 +15,9 @@ class LoginController extends Controller
             return $invalid;
         }
 
-        return Socialite::driver($provider)->stateless()->redirect();
+        return Socialite::driver($provider)
+            ->stateless()
+            ->redirect();
     }
 
     public function handleProviderCallback(string $provider) {
@@ -57,7 +59,7 @@ class LoginController extends Controller
     protected function validateProvider(string $provider)
     {
         if (!in_array($provider, ['github'])) {
-            return new JsonResponse(['error' => 'Please login using github'], 422);
+            return new JsonResponse(['error' => 'Please login using github.'], 422);
         }
         return null;
     }
