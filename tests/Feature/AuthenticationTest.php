@@ -37,7 +37,7 @@ class AuthenticationTest extends TestCase
         $this->get(route('login.callback', ['provider' => 'github']))
             ->assertStatus(Response::HTTP_CREATED);
 
-        // User is retrieved on subsequent loins via socialite
+        // User is retrieved on subsequent logins via socialite
         $this->get(route('login.callback', ['provider' => 'github']))
             ->assertOk();
     }
