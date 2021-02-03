@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use GuzzleHttp\Exception\ClientException;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
@@ -22,12 +23,15 @@ class LoginController extends Controller
             ->redirect();
     }
 
-    public function handleProviderCallback(string $provider): JsonResponse
+    public function handleProviderCallback(string $provider): Response
     {
         try {
             $user = Socialite::driver($provider)->stateless()->user();
         } catch (ClientException $exception) {
-            return response()->json(['error' => 'Invalid credentials provided.'], 422);
+            return response()->view('oauth.callback', ['payload' => [
+                'code' => 422,
+                'error' => 'Invalid credentials provided.'
+            ]], 422);
         }
 
         /** @var User $userCreated */
@@ -52,6 +56,11 @@ class LoginController extends Controller
         );
         $token = $userCreated->createToken('spa-token')->plainTextToken;
 
-        return new JsonResponse($userCreated, $userCreated->wasRecentlyCreated ? 201 : 200, ['Access-Token' => $token]);
+        $code = ($userCreated->wasRecentlyCreated ? 201 : 200);
+
+        return response()->view('oauth.callback', ['payload' => [
+            'code' => $code,
+            'token' => $token
+        ]], $code);
     }
 }

@@ -48,7 +48,7 @@ class AuthenticationTest extends TestCase
             ->andthrow($this->mock(ClientException::class));
         $this->get(route('login.callback', ['provider' => 'github']))
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJson(['error' => 'Invalid credentials provided.']);
+            ->assertSeeText('Invalid credentials provided.');
     }
 
     public function testAuthenticationProviderValidation()
