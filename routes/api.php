@@ -28,8 +28,8 @@ Route::get('login/{provider}/callback', [LoginController::class, 'handleProvider
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+    return new \App\Http\Resources\UserResource($request->user());
+})->name('user');
 
 Route::middleware('auth:sanctum')
     ->group(function () {
