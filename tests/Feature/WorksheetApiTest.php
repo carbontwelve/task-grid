@@ -20,7 +20,7 @@ class WorksheetApiTest extends TestCase
         $workbook = Workbook::factory()
             ->create(['authored_by' => $user->id]);
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $response = $this->getJson(route('workbook.worksheets', ['workbook' => $workbook]))
             ->assertStatus(200);
@@ -52,7 +52,7 @@ class WorksheetApiTest extends TestCase
 
         $this->assertEquals(0, $workbook->worksheets()->count());
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         // Store
         $response = $this->postJson(route('worksheet.store', ['workbook' => $workbook]), [
@@ -83,7 +83,7 @@ class WorksheetApiTest extends TestCase
                 'name' => 'Test Worksheet Show'
             ]));
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->getJson(route('worksheet.show', $worksheet))
             ->assertOk()
@@ -112,7 +112,7 @@ class WorksheetApiTest extends TestCase
 
         $found = $workbook->worksheets()->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->deleteJson(route('worksheet.destroy', ['worksheet' => $found->id]))
             ->assertStatus(204);

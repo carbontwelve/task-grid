@@ -14,7 +14,7 @@ class WorkbookApiTest extends TestCase
     public function testWorkbookIndex()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         for ($i = 0; $i < 10; $i++) {
             Workbook::factory()
@@ -33,7 +33,7 @@ class WorkbookApiTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->withoutExceptionHandling();
 
@@ -63,7 +63,7 @@ class WorkbookApiTest extends TestCase
                 'name' => 'Test Workbook Show'
             ]);
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->getJson(route('workbook.show', $workbook))
             ->assertOk()
@@ -85,7 +85,7 @@ class WorkbookApiTest extends TestCase
 
         $found = (new Workbook)->newQuery()->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->deleteJson(route('workbook.destroy', ['workbook' => $found->id]))
             ->assertStatus(204);

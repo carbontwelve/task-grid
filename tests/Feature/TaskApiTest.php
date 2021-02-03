@@ -26,7 +26,7 @@ class TaskApiTest extends TestCase
             ->save(Worksheet::factory()->make(['authored_by' => $user->id]));
 
         $this->assertEquals(0, $worksheet->tasks()->count());
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         for ($i = 0; $i < 10; $i++) {
             $worksheet->tasks()
@@ -55,7 +55,7 @@ class TaskApiTest extends TestCase
         $worksheet = $workbook->worksheets()
             ->save(Worksheet::factory()->make(['authored_by' => $user->id]));
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->withoutExceptionHandling();
 
@@ -90,7 +90,7 @@ class TaskApiTest extends TestCase
             'name' => 'Howdy'
         ]));
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $response = $this->getJson(route('task.show', ['task' => $task->id]))
             ->assertStatus(200);
@@ -123,7 +123,7 @@ class TaskApiTest extends TestCase
 
         $found = (new Task)->newQuery()->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->deleteJson(route('task.destroy', ['task' => $found->id]))
             ->assertStatus(204);
@@ -140,7 +140,7 @@ class TaskApiTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->putJson(route('task.milestone', ['task' => 123, 'milestone' => 123]))
             ->assertStatus(404);
@@ -167,7 +167,7 @@ class TaskApiTest extends TestCase
             'name' => 'Milestone'
         ]));
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $response = $this->getJson(route('task.show', ['task' => $task->id]))
             ->assertStatus(200)

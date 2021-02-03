@@ -25,7 +25,7 @@ class MilestoneApiTest extends TestCase
             ->save(Worksheet::factory()->make(['authored_by' => $user->id]));
 
         $this->assertEquals(0, $worksheet->milestones()->count());
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         for ($i = 0; $i < 10; $i++) {
             $worksheet->milestones()
@@ -54,7 +54,7 @@ class MilestoneApiTest extends TestCase
         $worksheet = $workbook->worksheets()
             ->save(Worksheet::factory()->make(['authored_by' => $user->id]));
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->withoutExceptionHandling();
 
@@ -92,7 +92,7 @@ class MilestoneApiTest extends TestCase
                 'name' => 'Test Milestone Show'
             ]));
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->getJson(route('milestone.show', $workbook))
             ->assertOk()
@@ -122,7 +122,7 @@ class MilestoneApiTest extends TestCase
 
         $found = (new Milestone)->newQuery()->first();
 
-        $this->actingAs($user, 'api');
+        $this->actingAs($user, 'sanctum');
 
         $this->deleteJson(route('milestone.destroy', ['milestone' => $found->id]))
             ->assertStatus(204);

@@ -27,11 +27,11 @@ Route::get('login/{provider}', [LoginController::class, 'redirectToProvider'])->
 Route::get('login/{provider}/callback', [LoginController::class, 'handleProviderCallback'])->name('login.callback');
 
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:api')
+Route::middleware('auth:sanctum')
     ->group(function () {
 
         //
